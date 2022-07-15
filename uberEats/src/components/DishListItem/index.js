@@ -1,12 +1,17 @@
-import { StyleSheet, View, Image, Text } from "react-native";
+import { StyleSheet, View, Image, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import RestaurantItem from "../../components/RestaurantItem";
 import restaurants from "../../../assets/data/restaurants.json";
-
+import { useNavigation } from "@react-navigation/native";
 // Connection with RestaurantDetailedPage
 export default function DishItem({ dish }) {
+  const navigation = useNavigation();
+
+  const onPressDish = () => {
+    navigation.navigate("Dish", { id: dish.id });
+  };
   return (
-    <View style={styles.container}>
+    <Pressable onPress={onPressDish} style={styles.container}>
       <View style={{ flex: 1 }}>
         <Text style={styles.name}>{dish.name}</Text>
         <Text numberOfLines={2} style={styles.description}>
@@ -18,7 +23,7 @@ export default function DishItem({ dish }) {
       {dish.image && (
         <Image source={{ uri: dish.image }} style={styles.image} />
       )}
-    </View>
+    </Pressable>
   );
 }
 

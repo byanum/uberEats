@@ -1,13 +1,18 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
 import RestaurantItem from "../../components/RestaurantItem";
 import restaurants from "../../../assets/data/restaurants.json";
-
+import { useNavigation } from "@react-navigation/native";
 const dish = restaurants[0].dishes[0]; //dummy data
 
 export default function DishDetailed() {
   const state = useState();
+  const navigation = useNavigation();
+
+  const onPressDetailed = () => {
+    navigation.navigate("Basket");
+  };
   // destructure ES6
   const [quantity, setQuantity] = useState(1);
 
@@ -50,11 +55,11 @@ export default function DishDetailed() {
       </View>
 
       {/* button */}
-      <View style={styles.button}>
+      <Pressable onPress={onPressDetailed} style={styles.button}>
         <Text style={styles.btnText}>
           Add {quantity} to basket &#8226; $ {getTotal()}
         </Text>
-      </View>
+      </Pressable>
     </View>
   );
 }
