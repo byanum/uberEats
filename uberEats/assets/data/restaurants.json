@@ -1,11 +1,12 @@
 [{
     "id": "1",
-    "name": "El Cabo Coffe Bar Tres De Mayo",
-    "deliveryFee": 1.40,
-    "minDeliveryTime": 25,
-    "maxDeliveryTime": 35,
-    "rating": 4.0,
-    "image": "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/uber-eats/restaurant1.jpeg",
+    "title": "El Cabo Coffe Bar Tres De Mayo",
+    "image": "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/products/cleanarchitecture.jpg",
+    "avgRating": 1.40,
+    "ratings": 4.0,
+    "price": 25,
+    "oldPrice": 45,
+   
     "dishes": [
       {
         "id": "1",
@@ -39,12 +40,12 @@
     ]
   }, {
     "id": "2",
-    "name": "Tony Roma's - C.C. Meridiano",
-    "deliveryFee": 0.40,
-    "minDeliveryTime": 25,
-    "maxDeliveryTime": 35,
-    "rating": 4.7,
-    "image": "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/uber-eats/restaurant2.jpeg",
+    "title": "El Cabo Coffe Bar Tres De Mayo",
+    "image": "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/products/cleancode.jpg",
+    "avgRating": 1.40,
+    "ratings": 4.0,
+    "price": 25,
+    "oldPrice": 45,
     "dishes": [
       {
         "name": "Cajun Ribs",
@@ -75,12 +76,12 @@
     ]
   }, {
     "id": "3",
-    "name": "Brothers Barbecue",
-    "deliveryFee": 1.40,
-    "minDeliveryTime": 20,
-    "maxDeliveryTime": 30,
-    "rating": 4.3,
-    "image": "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/uber-eats/restaurant3.jpeg",
+    "title": "El Cabo Coffe Bar Tres De Mayo",
+    "image": "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/products/imac1.jpg",
+    "avgRating": 1.40,
+    "ratings": 4.0,
+    "price": 25,
+    "oldPrice": 45,
     "dishes": [
       {
         "name": "Burger Mustang",
@@ -110,12 +111,12 @@
     ]
   }, {
     "id": "4",
-    "name": "Hamburguesa Nostra La Salle",
-    "deliveryFee": 0.90,
-    "minDeliveryTime": 30,
-    "maxDeliveryTime": 40,
-    "rating": 4.5,
-    "image": "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/uber-eats/restaurant4.jpeg",
+    "title": "El Cabo Coffe Bar Tres De Mayo",
+    "image": "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/products/keyboard1.jpg",
+    "avgRating": 1.40,
+    "ratings": 4.0,
+    "price": 25,
+    "oldPrice": 45,
     "dishes": [
       {
         "name": "English burger",
