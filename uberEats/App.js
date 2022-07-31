@@ -6,7 +6,7 @@ import { withAuthenticator } from "aws-amplify-react-native"; //higher order //1
 import Amplify from "aws-amplify"; //Amazon (1)
 import config from "./src/aws-exports"; //Amazon (2)
 
-Amplify.configure(config); //configure aws  //Amazon (3)
+Amplify.configure({ ...config, Analytics: { disabled: true } }); //configure aws  //Amazon (3)
 
 function App() {
   return (

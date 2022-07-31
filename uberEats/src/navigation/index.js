@@ -7,6 +7,7 @@ import OrderDetails from "../screens/OrderDetails";
 import OrderScreen from "../screens/OrdersScreen";
 import DishDetailed from "../screens/DishDetailedScreen";
 import Basket from "../screens/Basket";
+import ProfileScreen from "../screens/ProfileScreen";
 // import HomeScreen from "../screens/HomeScreen";
 
 // import OrderScreen from "../screens/OrdersScreen";
@@ -47,7 +48,7 @@ const HomeTabs = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={OrderScreen}
+        component={ProfileScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <FontAwesome5 name="user-alt" size={24} color={color} />
@@ -64,7 +65,11 @@ const HomeStackNavigator = () => {
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen name="Restaurants" component={HomeScreen} />
-      <HomeStack.Screen name="Restaurant" component={RestaurantDetailedPage} />
+      <HomeStack.Screen
+        name="Restaurant"
+        component={RestaurantDetailedPage}
+        options={{ headerShown: false }}
+      />
       <HomeStack.Screen name="Dish" component={DishDetailed} />
       <HomeStack.Screen name="Basket" component={Basket} />
       {/* <HomeStack.Screen name="Profile" component={Profile} />
