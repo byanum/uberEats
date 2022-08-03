@@ -1,20 +1,41 @@
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RestaurantItem from "../../components/RestaurantItem";
-import restaurants from "../../../assets/data/restaurants.json";
-import { useNavigation } from "@react-navigation/native";
-const dish = restaurants[0].dishes[0]; //dummy data
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { DataStore } from "aws-amplify";
+import { Dish } from "../../models";
+// import restaurants from "../../../assets/data/restaurants.json";
+// const dish = restaurants[0].dishes[0]; //dummy data
 
 export default function DishDetailed() {
   const state = useState();
   const navigation = useNavigation();
+  const route = useRoute();
+
+  // getting dish id
+  const id = route.params?.id;
+
+  const [dish, setDish] = useState(null);
+  // destructure ES6
+  const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    // id is defined then query
+    if (id) {
+      DataStore.query(Dish, id).then(setDish);
+    }
+  }, [id]);
 
   const onPressDetailed = () => {
     navigation.navigate("Basket");
   };
-  // destructure ES6
-  const [quantity, setQuantity] = useState(1);
 
   //   functions
   const onMinus = () => {
@@ -31,6 +52,9 @@ export default function DishDetailed() {
     return (dish.price * quantity).toFixed(2);
   };
 
+  if (!dish) {
+    return <ActivityIndicator size={"large"} color="grey" />;
+  }
   return (
     <View style={styles.page}>
       <Text style={styles.title}>{dish.name}</Text>
