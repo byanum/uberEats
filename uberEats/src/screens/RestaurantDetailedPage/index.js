@@ -1,20 +1,35 @@
-import { FlatList, View } from "react-native";
+import { useState, useEffect } from "react";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import restaurants from "../../../assets/data/restaurants.json";
+import { useRoute, useNavigation } from "@react-navigation/native";
+
 import DishItem from "../../components/DishListItem";
 import RestaurantHeader from "./Header";
 import styles from "./styles";
+import React from "react";
+import { DataStore } from "aws-amplify";
+import { Restaurant } from "../../models";
 
-import { useRoute, useNavigation } from "@react-navigation/native";
-
-const restaurant = restaurants[0];
+// import restaurants from "../../../assets/data/restaurants.json"; dummy
+// const restaurant = restaurants[0]; dummy
 
 export default function RestaurantDetailedPage() {
+  const [restaurant, setRestaurant] = useState(null); //initializing with null because at start no restaurant was selected as F key//Fetching specific id
+
   const route = useRoute(); //for passing id's
   const navigation = useNavigation();
 
   const id = route.params.id;
-  console.warn(id);
+  // console.warn(id);
+
+  useEffect(() => {
+    DataStore.query(Restaurant, id).then(setRestaurant);
+  }, []);
+
+  if (!restaurant) {
+    return <ActivityIndicator size={"large"} color="grey" />;
+  }
+
   return (
     <View style={styles.page}>
       <FlatList
