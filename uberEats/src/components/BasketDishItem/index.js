@@ -1,17 +1,16 @@
 import { StyleSheet, View, Text } from "react-native";
 import React from "react";
-import restaurants from "../../../assets/data/restaurants.json";
-
-const restaurant = restaurants[0]; //dummy data
+// import restaurants from "../../../assets/data/restaurants.json";
+// const restaurant = restaurants[0]; //dummy data
 
 export default function BasketDishItem({ basketDish }) {
   return (
     <View style={styles.row}>
       <View style={styles.quantityContainer}>
-        <Text>1</Text>
+        <Text>{basketDish.quantity}</Text>
       </View>
-      <Text style={{ fontWeight: "600" }}>{basketDish.name}</Text>
-      <Text style={{ marginLeft: "auto" }}>{basketDish.price}</Text>
+      <Text style={{ fontWeight: "600" }}>{basketDish.Dish.name}</Text>
+      <Text style={{ marginLeft: "auto" }}>{basketDish.Dish.price}</Text>
     </View>
   );
 }

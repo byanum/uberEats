@@ -7,6 +7,7 @@ import Amplify from "aws-amplify"; //Amazon (1)
 import config from "./src/aws-exports"; //Amazon (2)
 import AuthContextProvider from "./src/contexts/AuthContext";
 import BasketContextProvider from "./src/contexts/BasketContext";
+import OrderContextProvider from "./src/contexts/OrderContext";
 Amplify.configure({ ...config, Analytics: { disabled: true } }); //configure aws  //Amazon (3)
 
 function App() {
@@ -29,7 +30,9 @@ function App() {
 
       <AuthContextProvider>
         <BasketContextProvider>
-          <RootNavigator />
+          <OrderContextProvider>
+            <RootNavigator />
+          </OrderContextProvider>
         </BasketContextProvider>
       </AuthContextProvider>
       <StatusBar style="auto" />

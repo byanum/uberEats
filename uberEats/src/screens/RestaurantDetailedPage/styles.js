@@ -29,5 +29,17 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     paddingHorizontal: 5,
   },
+  button: {
+    backgroundColor: "black",
+    padding: 10,
+    margin: 10,
+    marginTop: "auto",
+    alignItems: "center",
+  },
+  btnText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "300",
+  },
 });
 export default styles;

@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  View,
+  Pressable,
+  Text,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 
@@ -24,7 +30,11 @@ export default function RestaurantDetailedPage() {
   const id = route.params?.id;
   // console.warn(id);
 
-  const { setRestaurant: setBasketRestaurant } = useBasketContext();
+  const {
+    setRestaurant: setBasketRestaurant,
+    basket,
+    basketDishes,
+  } = useBasketContext();
 
   useEffect(() => {
     // stop execution if id is undefined
@@ -59,7 +69,6 @@ export default function RestaurantDetailedPage() {
         renderItem={({ item }) => <DishItem dish={item} />}
         keyExtractor={(item) => item.name}
       />
-
       <View style={styles.iconContainer}>
         <Ionicons
           name="arrow-back-circle"
@@ -68,6 +77,19 @@ export default function RestaurantDetailedPage() {
           onPress={() => navigation.goBack()}
         />
       </View>
+      {/* button */}
+      {/* display:  only if basket exists */}
+
+      {basket && (
+        <Pressable
+          onPress={() => navigation.navigate("Basket")}
+          style={styles.button}
+        >
+          <Text style={styles.btnText}>
+            Open Basket &#8226; {basketDishes.lenght}
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 }
