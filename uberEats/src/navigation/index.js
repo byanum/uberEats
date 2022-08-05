@@ -8,6 +8,7 @@ import OrderScreen from "../screens/OrdersScreen";
 import DishDetailed from "../screens/DishDetailedScreen";
 import Basket from "../screens/Basket";
 import ProfileScreen from "../screens/ProfileScreen";
+import { useAuthContext } from "../contexts/AuthContext";
 // import HomeScreen from "../screens/HomeScreen";
 
 // import OrderScreen from "../screens/OrdersScreen";
@@ -16,9 +17,14 @@ import ProfileScreen from "../screens/ProfileScreen";
 const Stack = createStackNavigator(); //create stack navigator :: contains stack.navigator & stack.screen
 
 const RootNavigator = () => {
+  const { dbUser } = useAuthContext();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="HomeTabs" component={HomeTabs} />
+      {dbUser ? (
+        <Stack.Screen name="HomeTabs" component={HomeTabs} />
+      ) : (
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+      )}
     </Stack.Navigator>
   );
 };

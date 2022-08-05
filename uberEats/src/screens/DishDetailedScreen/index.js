@@ -11,6 +11,8 @@ import RestaurantItem from "../../components/RestaurantItem";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { DataStore } from "aws-amplify";
 import { Dish } from "../../models";
+import { useBasketContext } from "../../contexts/BasketContext";
+
 // import restaurants from "../../../assets/data/restaurants.json";
 // const dish = restaurants[0].dishes[0]; //dummy data
 
@@ -21,6 +23,8 @@ export default function DishDetailed() {
 
   // getting dish id
   const id = route.params?.id;
+
+  const { addDishToBasket } = useBasketContext();
 
   const [dish, setDish] = useState(null);
   // destructure ES6
@@ -33,8 +37,9 @@ export default function DishDetailed() {
     }
   }, [id]);
 
-  const onPressDetailed = () => {
-    navigation.navigate("Basket");
+  const onAddToBasket = async () => {
+    await addDishToBasket(dish, quantity);
+    navigation.goBack();
   };
 
   //   functions
@@ -79,7 +84,7 @@ export default function DishDetailed() {
       </View>
 
       {/* button */}
-      <Pressable onPress={onPressDetailed} style={styles.button}>
+      <Pressable onPress={onAddToBasket} style={styles.button}>
         <Text style={styles.btnText}>
           Add {quantity} to basket &#8226; $ {getTotal()}
         </Text>

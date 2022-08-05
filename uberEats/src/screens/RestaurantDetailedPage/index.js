@@ -7,8 +7,9 @@ import DishItem from "../../components/DishListItem";
 import RestaurantHeader from "./Header";
 import styles from "./styles";
 import React from "react";
-import { DataStore } from "aws-amplify";
+import { DataStore } from "@aws-amplify/datastore";
 import { Restaurant, Dish } from "../../models";
+import { useBasketContext } from "../../contexts/BasketContext";
 
 // import restaurants from "../../../assets/data/restaurants.json"; dummy
 // const restaurant = restaurants[0]; dummy
@@ -23,11 +24,15 @@ export default function RestaurantDetailedPage() {
   const id = route.params?.id;
   // console.warn(id);
 
+  const { setRestaurant: setBasketRestaurant } = useBasketContext();
+
   useEffect(() => {
     // stop execution if id is undefined
     if (!id) {
       return;
     }
+    // initailly it is null
+    setBasketRestaurant(null);
     // Restaurant Detailed Header
     DataStore.query(Restaurant, id).then(setRestaurant);
 
@@ -36,6 +41,11 @@ export default function RestaurantDetailedPage() {
       setDishes
     );
   }, [id]);
+
+  // when receive restaurant after fetching
+  useEffect(() => {
+    setBasketRestaurant(restaurant);
+  }, [restaurant]);
 
   if (!restaurant) {
     return <ActivityIndicator size={"large"} color="grey" />;
