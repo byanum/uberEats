@@ -1,19 +1,20 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
-
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import orders from "./assets/data/orders.json";
-import OrderItem from "./src/components/OrderItem";
+
+import OrderScreen from "./src/screens/OrderScreen.js";
+import OrderDelivery from "./src/screens/OrderDelivery";
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={orders}
-        renderItem={({ item }) => <OrderItem order={item} />}
-      />
-
+    <GestureHandlerRootView style={styles.container}>
+      {/* <SafeAreaView> */}
+      <OrderScreen />
+      {/* <OrderDelivery /> */}
       <StatusBar style="auto" />
-    </SafeAreaView>
+      {/* </SafeAreaView> */}
+    </GestureHandlerRootView>
   );
 }
 
