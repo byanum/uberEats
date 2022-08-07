@@ -10,8 +10,8 @@ export default function App() {
   return (
     <GestureHandlerRootView style={styles.container}>
       {/* <SafeAreaView> */}
-      <OrderScreen />
-      {/* <OrderDelivery /> */}
+      {/* <OrderScreen /> */}
+      <OrderDelivery />
       <StatusBar style="auto" />
       {/* </SafeAreaView> */}
     </GestureHandlerRootView>

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import OrderItem from "../../components/OrderItem";
@@ -8,9 +8,11 @@ import orders from "../../../assets/data/orders.json";
 const OrderScreen = () => {
   const bottomSheetRef = useRef(null);
 
+  // snappoint: in order to reduce re-rendering again n again
+  const snapPoints = useMemo(() => ["12%", "95%"], []);
   return (
     <View style={styles.container}>
-      <BottomSheet ref={bottomSheetRef} snapPoints={["12%", "95%"]}>
+      <BottomSheet ref={bottomSheetRef} snapPoints={snapPoints}>
         <View style={styles.innerContainer}>
           <Text style={styles.textA}>You're Online</Text>
           <Text style={styles.textDB}>Available Orders: {orders.length}</Text>
