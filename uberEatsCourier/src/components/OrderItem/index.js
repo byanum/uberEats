@@ -1,13 +1,18 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import orders from "../../../assets/data/orders.json";
+// import orders from "../../../assets/data/orders.json";
 
-const order = orders[0];
+// const order = orders[0];
 
 const OrderItem = ({ order }) => {
+  const navigation = useNavigation();
   return (
-    <View style={styles.container}>
+    <Pressable
+      style={styles.container}
+      onPress={() => navigation.navigate("OrderDelivery", { id: order.id })}
+    >
       <View style={styles.imgContainer}>
         <Image style={styles.img} source={{ uri: order.Restaurant.image }} />
         <View style={styles.textContainer}>
@@ -33,7 +38,7 @@ const OrderItem = ({ order }) => {
         </View>
       </View>
       <StatusBar style="auto" />
-    </View>
+    </Pressable>
   );
 };
 
