@@ -4,11 +4,11 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  Dimensions,
   useWindowDimensions,
 } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import MapView, { Marker } from "react-native-maps";
+
 import OrderItem from "../../components/OrderItem";
 import styles from "./styles";
 
@@ -19,6 +19,7 @@ const OrderScreen = () => {
   const { height, width } = useWindowDimensions();
   // snappoint: in order to reduce re-rendering again n again
   const snapPoints = useMemo(() => ["12%", "95%"], []);
+
   return (
     <View style={styles.container}>
       {/* Map */}
