@@ -88,7 +88,7 @@ const OrderDelivery = () => {
             { latitude: order.Restaurant.lat, longitude: order.Restaurant.lng },
           ]}
           strokeColor="#3120E0"
-          apikey={"AIzaSyCZPcQ0gles-DIf0jYaQGShSEh3EfmOtc8"}
+          apikey={"google api"}
           onReady={(result) => {
             setTotalMinutes(result.duration);
             setTotalKm(result.distance);
