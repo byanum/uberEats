@@ -61,7 +61,6 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
   },
   btn: {
-    backgroundColor: "#7DCE13",
     marginTop: "auto",
     padding: 10,
     margin: 20,

@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   useWindowDimensions,
+  Pressable,
 } from "react-native";
 import React from "react";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -14,16 +15,40 @@ import MapViewDirections from "react-native-maps-directions";
 import { FontAwesome5, Fontisto } from "@expo/vector-icons";
 import orders from "../../../assets/data/orders.json";
 import styles from "./styles";
-import { or } from "react-native-reanimated";
+import render from "react-native-web/dist/cjs/exports/render";
 
 const order = orders[0];
+
+// objects for restaurant location
+const restaurantLocation = {
+  latitude: order.Restaurant.lat,
+  longitude: order.Restaurant.lng,
+};
+
+// objects for user location
+const userLocation = {
+  latitude: order.User.lat,
+  longitude: order.User.lng,
+};
+
+// enums for order statuses
+const ORDER_STATUSES = {
+  READY_FOR_PICKUP: "READY_FOR_PICKUP",
+  ACCEPTED: "ACCEPTED",
+  PICKED_UP: "PICKED_UP",
+};
 
 const OrderDelivery = () => {
   const [driversLocation, setDriverLocation] = useState(null);
   const [totalMinutes, setTotalMinutes] = useState(0);
   const [totalKm, setTotalKm] = useState(0);
+  const [deliveryStatus, setDeliveryStatus] = useState(
+    ORDER_STATUSES.READY_FOR_PICKUP
+  );
+  const [isDriverClose, setIsDriverClose] = useState(false);
 
   const bottomSheetRef = useRef(null);
+  const mapRef = useRef(null);
   const { height, width } = useWindowDimensions();
   // snappoint: in order to reduce re-rendering again n again
   const snapPoints = useMemo(() => ["12%", "95%"], []);
@@ -35,7 +60,7 @@ const OrderDelivery = () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (!status === "granted") {
         console.log("Location Access Denied from User");
-        return;
+        // return;
       }
 
       let location = await Location.getCurrentPositionAsync();
@@ -45,7 +70,7 @@ const OrderDelivery = () => {
       });
     })();
 
-    // asynchronusly moving through the direction
+    // asynchronusly moving through the direction | ask permission
     const foregroundSubscription = Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.High,
@@ -58,8 +83,8 @@ const OrderDelivery = () => {
         });
       }
     );
-    // cleaning up and not re running again n again
     return foregroundSubscription;
+    // cleaning up and not re running again n again
   }, []);
 
   // if not set
@@ -67,9 +92,63 @@ const OrderDelivery = () => {
     return <ActivityIndicator style={{ marginTop: 100 }} size={"large"} />;
   }
 
+  // BUTTON
+
+  const onButtonPressed = () => {
+    if (deliveryStatus === ORDER_STATUSES.READY_FOR_PICKUP) {
+      bottomSheetRef.current?.collapse();
+      // animating: zoom on in driver
+      mapRef.current.animateToRegion({
+        latitude: driversLocation.latitude,
+        longitude: driversLocation.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+      setDeliveryStatus(ORDER_STATUSES.ACCEPTED);
+    }
+
+    if (deliveryStatus === ORDER_STATUSES.ACCEPTED) {
+      setDeliveryStatus(ORDER_STATUSES.PICKED_UP);
+      bottomSheetRef.current?.collapse();
+    }
+
+    if (deliveryStatus === ORDER_STATUSES.PICKED_UP) {
+      console.warn("Delivery Finished");
+      bottomSheetRef.current?.collapse();
+    }
+  };
+
+  // rendering button
+  const renderButtonTitle = () => {
+    if (deliveryStatus === ORDER_STATUSES.READY_FOR_PICKUP) {
+      return "Accept Order";
+    }
+    if (deliveryStatus === ORDER_STATUSES.ACCEPTED) {
+      return "Pick up Order";
+    }
+    if (deliveryStatus === ORDER_STATUSES.PICKED_UP) {
+      return "Complete Delivery";
+    }
+  };
+
+  // disbale button
+  const isButtonPressable = () => {
+    if (deliveryStatus === ORDER_STATUSES.READY_FOR_PICKUP) {
+      return false;
+    }
+    if (deliveryStatus === ORDER_STATUSES.ACCEPTED && isDriverClose) {
+      return false;
+    }
+    if (deliveryStatus === ORDER_STATUSES.PICKED_UP && isDriverClose) {
+      return false;
+    }
+    return true;
+  };
+
   return (
     <View style={styles.container}>
       <MapView
+        ref={mapRef}
         style={{ height, width }}
         showsUserLocation
         followsUserLocation
@@ -82,14 +161,21 @@ const OrderDelivery = () => {
       >
         <MapViewDirections
           origin={driversLocation}
-          destination={{ latitude: order.User.lat, longitude: order.User.lng }}
+          destination={
+            deliveryStatus === ORDER_STATUSES.ACCEPTED
+              ? restaurantLocation
+              : userLocation
+          }
           strokeWidth={10}
-          waypoints={[
-            { latitude: order.Restaurant.lat, longitude: order.Restaurant.lng },
-          ]}
+          waypoints={
+            deliveryStatus === ORDER_STATUSES.READY_FOR_PICKUP
+              ? [restaurantLocation]
+              : []
+          }
           strokeColor="#3120E0"
-          apikey={"google api"}
+          apikey={""}
           onReady={(result) => {
+            setIsDriverClose(result.distance < 0.1);
             setTotalMinutes(result.duration);
             setTotalKm(result.distance);
           }}
@@ -206,9 +292,16 @@ const OrderDelivery = () => {
           </Text>
         </View>
         {/* button */}
-        <View style={styles.btn}>
-          <Text style={styles.btnText}>Accept Order</Text>
-        </View>
+        <Pressable
+          style={{
+            ...styles.btn,
+            backgroundColor: isButtonPressable() ? "grey" : "#7DCE13",
+          }}
+          onPress={onButtonPressed}
+          disabled={isButtonPressable()}
+        >
+          <Text style={styles.btnText}>{renderButtonTitle()}</Text>
+        </Pressable>
       </BottomSheet>
     </View>
   );
