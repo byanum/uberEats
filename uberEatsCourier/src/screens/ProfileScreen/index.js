@@ -39,6 +39,7 @@ const ProfileScreen = () => {
       Courier.copyOf(dbCourier, (updated) => {
         updated.name = name;
         updated.transportationMode = transportationMode;
+        updated.Courier = dbCourier;
       })
     );
     setdbCourier(courier);

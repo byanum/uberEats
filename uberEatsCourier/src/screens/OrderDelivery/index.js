@@ -20,6 +20,7 @@ import styles from "./styles";
 import { DataStore } from "aws-amplify";
 import { Order, OrderDish, User } from "../../models";
 
+import { useOrderContext } from "../../contexts/OrderContext";
 // >dummy
 // import orders from "../../../assets/data/orders.json";
 // const order = orders[0];
@@ -43,6 +44,8 @@ const OrderDelivery = () => {
     ORDER_STATUSES.READY_FOR_PICKUP
   );
   const [isDriverClose, setIsDriverClose] = useState(false);
+  // accept order: get
+  const { acceptOrder } = useOrderContext();
 
   const bottomSheetRef = useRef(null);
   const mapRef = useRef(null);
@@ -121,6 +124,7 @@ const OrderDelivery = () => {
         longitudeDelta: 0.01,
       });
       setDeliveryStatus(ORDER_STATUSES.ACCEPTED);
+      acceptOrder(order);
     }
 
     if (deliveryStatus === ORDER_STATUSES.ACCEPTED) {

@@ -10,7 +10,7 @@ import { withAuthenticator } from "aws-amplify-react-native";
 import awsconfig from "./aws-exports";
 
 import AuthContextProvider from "./src/contexts/AuthContext";
-
+import OrderContextProvider from "./src/contexts/OrderContext";
 // as it dont have analytics, so override it with the below code
 Amplify.configure({
   ...awsconfig,
@@ -23,10 +23,12 @@ function App() {
   return (
     <GestureHandlerRootView style={styles.container}>
       <AuthContextProvider>
-        <NavigationContainer>
-          <NavigationScreen />
-          <StatusBar style="auto" />
-        </NavigationContainer>
+        <OrderContextProvider>
+          <NavigationContainer>
+            <NavigationScreen />
+            <StatusBar style="auto" />
+          </NavigationContainer>
+        </OrderContextProvider>
       </AuthContextProvider>
     </GestureHandlerRootView>
   );
