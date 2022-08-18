@@ -6,10 +6,10 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import NavigationScreen from "./src/navigation";
 
 import { Amplify } from "aws-amplify";
-
 import { withAuthenticator } from "aws-amplify-react-native";
-
 import awsconfig from "./aws-exports";
+
+import AuthContextProvider from "./src/contexts/AuthContext";
 
 // as it dont have analytics, so override it with the below code
 Amplify.configure({
@@ -22,10 +22,12 @@ Amplify.configure({
 function App() {
   return (
     <GestureHandlerRootView style={styles.container}>
-      <NavigationContainer>
-        <NavigationScreen />
-        <StatusBar style="auto" />
-      </NavigationContainer>
+      <AuthContextProvider>
+        <NavigationContainer>
+          <NavigationScreen />
+          <StatusBar style="auto" />
+        </NavigationContainer>
+      </AuthContextProvider>
     </GestureHandlerRootView>
   );
 }
