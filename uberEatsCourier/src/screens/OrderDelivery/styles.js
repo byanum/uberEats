@@ -72,4 +72,11 @@ export default StyleSheet.create({
     fontWeight: "400",
     color: "white",
   },
+  dish: {
+    fontSize: 18,
+    color: "grey",
+    fontWeight: "500",
+    letterSpacing: 0.5,
+    marginBottom: 5,
+  },
 });

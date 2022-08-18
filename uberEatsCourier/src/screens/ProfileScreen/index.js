@@ -50,8 +50,8 @@ const ProfileScreen = () => {
         new Courier({
           name,
 
-          lat: 0,
-          lng: 0,
+          lat: 33.498387,
+          lng: 73.044901,
           sub,
           transportationMode,
         })

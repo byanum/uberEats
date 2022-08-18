@@ -13,23 +13,16 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import MapViewDirections from "react-native-maps-directions";
 import { FontAwesome5, Fontisto } from "@expo/vector-icons";
-import orders from "../../../assets/data/orders.json";
+import { useNavigation, useRoute } from "@react-navigation/native";
+
 import styles from "./styles";
-import render from "react-native-web/dist/cjs/exports/render";
 
-const order = orders[0];
+import { DataStore } from "aws-amplify";
+import { Order, OrderDish, User } from "../../models";
 
-// objects for restaurant location
-const restaurantLocation = {
-  latitude: order.Restaurant.lat,
-  longitude: order.Restaurant.lng,
-};
-
-// objects for user location
-const userLocation = {
-  latitude: order.User.lat,
-  longitude: order.User.lng,
-};
+// >dummy
+// import orders from "../../../assets/data/orders.json";
+// const order = orders[0];
 
 // enums for order statuses
 const ORDER_STATUSES = {
@@ -39,6 +32,10 @@ const ORDER_STATUSES = {
 };
 
 const OrderDelivery = () => {
+  const [order, setOrder] = useState(null);
+  const [user, setUser] = useState(null);
+  const [dishes, setDishes] = useState([]);
+
   const [driversLocation, setDriverLocation] = useState(null);
   const [totalMinutes, setTotalMinutes] = useState(0);
   const [totalKm, setTotalKm] = useState(0);
@@ -52,6 +49,29 @@ const OrderDelivery = () => {
   const { height, width } = useWindowDimensions();
   // snappoint: in order to reduce re-rendering again n again
   const snapPoints = useMemo(() => ["12%", "95%"], []);
+  // route: getting id
+  const route = useRoute();
+  const id = route.params?.id;
+
+  // fetch orders
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    DataStore.query(Order, id).then(setOrder);
+  }, [id]);
+  // query user when we have the order
+  useEffect(() => {
+    if (!order) {
+      return;
+    }
+    DataStore.query(User, order.userID).then(setUser);
+
+    // query dishes
+    DataStore.query(OrderDish, (od) => od.orderID("eq", order.id)).then(
+      setDishes
+    );
+  }, [order]);
 
   // requesting user's location
   useEffect(() => {
@@ -59,7 +79,7 @@ const OrderDelivery = () => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (!status === "granted") {
-        console.log("Location Access Denied from User");
+        console.warn("Location Access Denied from User");
         // return;
       }
 
@@ -83,14 +103,10 @@ const OrderDelivery = () => {
         });
       }
     );
-    return foregroundSubscription;
+    // giving probs !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // return foregroundSubscription;
     // cleaning up and not re running again n again
   }, []);
-
-  // if not set
-  if (!driversLocation) {
-    return <ActivityIndicator style={{ marginTop: 100 }} size={"large"} />;
-  }
 
   // BUTTON
 
@@ -145,6 +161,28 @@ const OrderDelivery = () => {
     return true;
   };
 
+  // objects for restaurant location
+  const restaurantLocation = {
+    latitude: order?.Restaurant?.lat,
+    longitude: order?.Restaurant?.lng,
+  };
+
+  // objects for user location
+  const userLocation = {
+    latitude: user?.lat,
+    longitude: user?.lng,
+  };
+
+  // if not set
+  if (!driversLocation) {
+    return <ActivityIndicator style={{ marginTop: 100 }} size={"large"} />;
+  }
+
+  // if not set
+  if (!order || !driversLocation || !user) {
+    return <ActivityIndicator style={{ marginTop: 100 }} size={"large"} />;
+  }
+
   return (
     <View style={styles.container}>
       <MapView
@@ -183,8 +221,7 @@ const OrderDelivery = () => {
         {/* Marker 1 */}
         <Marker
           coordinate={{
-            latitude: order.Restaurant.lat,
-            longitude: order.Restaurant.lng,
+            restaurantLocation,
           }}
           title={order.Restaurant.name}
           description={order.Restaurant.address}
@@ -200,11 +237,10 @@ const OrderDelivery = () => {
         {/* Marker 2 */}
         <Marker
           coordinate={{
-            latitude: order.User.lat,
-            longitude: order.User.lng,
+            userLocation,
           }}
-          title={order.User.name}
-          description={order.User.address}
+          title={user.name}
+          description={user.address}
         >
           <FontAwesome5
             name="user"
@@ -252,44 +288,21 @@ const OrderDelivery = () => {
               color="#3F4E4F"
               style={{ marginHorizontal: 5 }}
             />
-            <Text style={styles.userAddress}>{order.User.address}</Text>
+            <Text style={styles.userAddress}>{user.address}</Text>
           </View>
         </View>
 
         <View style={styles.items}>
-          <Text
-            style={{
-              fontSize: 18,
-              color: "grey",
-              fontWeight: "500",
-              letterSpacing: 0.5,
-              marginBottom: 5,
-            }}
-          >
-            Big Mac x3
-          </Text>
-          <Text
-            style={{
-              fontSize: 18,
-              color: "grey",
-              fontWeight: "500",
-              letterSpacing: 0.5,
-              marginBottom: 5,
-            }}
-          >
-            Coco Cola x3
-          </Text>
-          <Text
-            style={{
-              fontSize: 18,
-              color: "grey",
-              fontWeight: "500",
-              letterSpacing: 0.5,
-              marginBottom: 5,
-            }}
-          >
-            McFlurry Strawberry Ice Cream x3
-          </Text>
+          {/* {dishes.map((dishItem) => {
+            <Text style={styles.dish} key={dishItem.id}>
+              {dishItem.Dish.name} x {dishItem.quantity}
+            </Text>;
+          })} */}
+          {dishes.map((dishItem) => (
+            <Text style={styles.dish} key={dishItem.id}>
+              {dishItem.Dish.name} x {dishItem.quantity}
+            </Text>
+          ))}
         </View>
         {/* button */}
         <Pressable
