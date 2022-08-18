@@ -2,12 +2,21 @@ import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import { Entypo } from "@expo/vector-icons";
+import { useState, useEffect } from "react";
+import { DataStore } from "aws-amplify";
+import { User } from "../../models";
 // import orders from "../../../assets/data/orders.json";
-
 // const order = orders[0];
 
 const OrderItem = ({ order }) => {
+  const [user, setUser] = useState(null);
   const navigation = useNavigation();
+
+  // quering the data
+  useEffect(() => {
+    DataStore.query(User, order.userID).then(setUser);
+  }, []);
+
   return (
     <Pressable
       style={styles.container}
@@ -25,8 +34,8 @@ const OrderItem = ({ order }) => {
           <Text style={{ marginTop: 15, color: "black", fontWeight: "500" }}>
             Delivery Details
           </Text>
-          <Text>{order.User.name}</Text>
-          <Text>{order.User.address}</Text>
+          <Text>{user?.name}</Text>
+          <Text>{user?.address}</Text>
         </View>
         <View style={styles.iconContainer}>
           <Entypo

@@ -1,24 +1,30 @@
-import { useRef, useMemo } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  useWindowDimensions,
-} from "react-native";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { useRef, useMemo, useState, useEffect } from "react";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
+import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import MapView, { Marker } from "react-native-maps";
 
 import OrderItem from "../../components/OrderItem";
 import styles from "./styles";
 
-import orders from "../../../assets/data/orders.json";
+import { DataStore } from "aws-amplify";
+import { Order } from "../../models";
+
+// import orders from "../../../assets/data/orders.json"; dummy data
 
 const OrderScreen = () => {
   const bottomSheetRef = useRef(null);
   const { height, width } = useWindowDimensions();
   // snappoint: in order to reduce re-rendering again n again
   const snapPoints = useMemo(() => ["12%", "95%"], []);
+
+  const [orders, setOrders] = useState([]);
+
+  // for quering orders
+  useEffect(() => {
+    DataStore.query(Order, (order) =>
+      order.status("eq", "READY_FOR_PICKUP")
+    ).then(setOrders);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -45,7 +51,7 @@ const OrderScreen = () => {
           <Text style={styles.textA}>You're Online</Text>
           <Text style={styles.textDB}>Available Orders: {orders.length}</Text>
         </View>
-        <FlatList
+        <BottomSheetFlatList
           data={orders}
           renderItem={({ item }) => <OrderItem order={item} />}
         />
