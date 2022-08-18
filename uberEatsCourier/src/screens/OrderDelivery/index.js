@@ -173,7 +173,7 @@ const OrderDelivery = () => {
               : []
           }
           strokeColor="#3120E0"
-          apikey={""}
+          apikey={"AIzaSyCZPcQ0gles-DIf0jYaQGShSEh3EfmOtc8"}
           onReady={(result) => {
             setIsDriverClose(result.distance < 0.1);
             setTotalMinutes(result.duration);
