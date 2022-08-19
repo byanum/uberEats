@@ -1,45 +1,90 @@
 import { useRef, useMemo, useState, useEffect } from "react";
-import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  useWindowDimensions,
+  ActivityIndicator,
+} from "react-native";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import MapView, { Marker } from "react-native-maps";
 
 import OrderItem from "../../components/OrderItem";
 import styles from "./styles";
-
+import * as Location from "expo-location";
 import { DataStore } from "aws-amplify";
 import { Order } from "../../models";
-
-// import orders from "../../../assets/data/orders.json"; dummy data
+import CustomMarker from "../../components/CustomMarker";
 
 const OrderScreen = () => {
   const bottomSheetRef = useRef(null);
   const { height, width } = useWindowDimensions();
+
   // snappoint: in order to reduce re-rendering again n again
   const snapPoints = useMemo(() => ["12%", "95%"], []);
 
   const [orders, setOrders] = useState([]);
-
+  const [driversLocation, setDriverLocation] = useState(null);
   // for quering orders
-  useEffect(() => {
+  const fetchOrder = () => {
     DataStore.query(Order, (order) =>
       order.status("eq", "READY_FOR_PICKUP")
     ).then(setOrders);
-  }, [orders]);
+  };
 
+  useEffect(() => {
+    fetchOrder();
+
+    // subscribing to current updates
+    const subscription = DataStore.observe(Order).subscribe((msg) => {
+      if (msg.opType === "UPDATE") {
+        fetchOrder();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // requesting user's location
+  useEffect(() => {
+    // alternate way of creating and calling a function
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (!status === "granted") {
+        console.warn("Location Access Denied from User");
+        // return;
+      }
+
+      let location = await Location.getCurrentPositionAsync();
+      setDriverLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    })();
+  }, []);
+
+  if (!driversLocation) {
+    return <ActivityIndicator size={"large"} color="grey" />;
+  }
   return (
     <View style={styles.container}>
       {/* Map */}
-      <MapView style={{ height, width }} showsUserLocation followsUserLocation>
+      <MapView
+        style={{ height, width }}
+        showsUserLocation
+        followsUserLocation
+        initialRegion={{
+          latitude: driversLocation.latitude,
+          longitude: driversLocation.longitude,
+          latitudeDelta: 0.07,
+          longitudeDelta: 0.07,
+        }}
+      >
         {/* Multiple Locations */}
         {orders.map((order) => (
-          <MapView.Marker
+          <CustomMarker
             key={order.id}
-            title={order.Restaurant.name}
-            description={order.Restaurant.address}
-            coordinate={{
-              latitude: order.Restaurant.lat,
-              longitude: order.Restaurant.lng,
-            }}
+            data={order.Restaurant}
+            type="RESTAURANT"
           />
         ))}
       </MapView>

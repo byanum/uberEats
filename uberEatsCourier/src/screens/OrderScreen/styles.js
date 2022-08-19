@@ -6,9 +6,10 @@ export default StyleSheet.create({
     flex: 1,
   },
   innerContainer: {
-    flex: 1,
     alignItems: "center",
+    marginBottom: 20,
   },
+
   textA: {
     fontSize: 20,
     fontWeight: "600",

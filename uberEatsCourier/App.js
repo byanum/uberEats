@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet } from "react-native";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -11,6 +11,10 @@ import awsconfig from "./aws-exports";
 
 import AuthContextProvider from "./src/contexts/AuthContext";
 import OrderContextProvider from "./src/contexts/OrderContext";
+
+import { LogBox } from "react-native";
+LogBox.ignoreLogs(["Setting a timer"]);
+
 // as it dont have analytics, so override it with the below code
 Amplify.configure({
   ...awsconfig,
@@ -21,26 +25,17 @@ Amplify.configure({
 
 function App() {
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <AuthContextProvider>
-        <OrderContextProvider>
-          <NavigationContainer>
+    <NavigationContainer>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AuthContextProvider>
+          <OrderContextProvider>
             <NavigationScreen />
-            <StatusBar style="auto" />
-          </NavigationContainer>
-        </OrderContextProvider>
-      </AuthContextProvider>
-    </GestureHandlerRootView>
+          </OrderContextProvider>
+        </AuthContextProvider>
+      </GestureHandlerRootView>
+      <StatusBar style="auto" />
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-
-    justifyContent: "center",
-  },
-});
 
 export default withAuthenticator(App);

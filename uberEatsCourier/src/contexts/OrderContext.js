@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState, useContext } from "react";
 import { Auth, DataStore } from "aws-amplify";
-import { Courier, Order, User } from "../models";
+import { Courier, Order, User, OrderDish } from "../models";
 const OrderContext = createContext({}); //an emty object
 import { useAuthContext } from "./AuthContext";
 // store data about auth user
@@ -28,19 +28,66 @@ const OrderContextProvider = ({ children }) => {
     );
   };
 
-  const acceptOrder = () => {
+  // Real time Synchronization
+  useEffect(() => {
+    if (!order) {
+      return;
+    }
+    const subscription = DataStore.observe(Order, order.id).subscribe(
+      ({ opType, element }) => {
+        if (opType === "UPDATE") {
+          fetchOrder(element.id);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [order?.id]);
+
+  const acceptOrder = async () => {
     // update the grren button: accepted in courier table
-    DataStore.save(
+    const updatedOrder = await DataStore.save(
       Order.copyOf(order, (updated) => {
         updated.status = "ACCEPTED";
         updated.Courier = dbCourier;
       })
-    ).then(setOrder);
+    );
+    setOrder(updatedOrder);
+  };
+
+  const pickUpOrder = async () => {
+    // update the grren button: accepted in courier table
+    const updatedOrder = await DataStore.save(
+      Order.copyOf(order, (updated) => {
+        updated.status = "PICKED_UP";
+        updated.Courier = dbCourier;
+      })
+    );
+    setOrder(updatedOrder);
+  };
+
+  const completeOrder = async () => {
+    // update the grren button: accepted in courier table
+    const updatedOrder = await DataStore.save(
+      Order.copyOf(order, (updated) => {
+        updated.status = "COMPLETED";
+        updated.Courier = dbCourier;
+      })
+    );
+    setOrder(updatedOrder);
   };
 
   return (
     <OrderContext.Provider
-      value={{ acceptOrder, fetchOrder, order, user, dishes }}
+      value={{
+        acceptOrder,
+        fetchOrder,
+        order,
+        user,
+        dishes,
+        pickUpOrder,
+        completeOrder,
+      }}
     >
       {/* receiving props */}
       {children}
