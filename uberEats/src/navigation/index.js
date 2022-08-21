@@ -4,12 +4,12 @@ import { Foundation, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import RestaurantDetailedPage from "../screens/RestaurantDetailedPage";
 import OrderDetails from "../screens/OrderDetails";
-import OrderScreen from "../screens/OrdersScreen";
+import OrdersScreen from "../screens/OrdersScreen";
 import DishDetailed from "../screens/DishDetailedScreen";
 import Basket from "../screens/Basket";
 import ProfileScreen from "../screens/ProfileScreen";
 import { useAuthContext } from "../contexts/AuthContext";
-// import HomeScreen from "../screens/HomeScreen";
+import OrderDetailsNavigator from "./OrderDetailsNavigator";
 
 // import OrderScreen from "../screens/OrdersScreen";
 // import Basket from "../screens/Basket";
@@ -44,7 +44,7 @@ const HomeTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Orders"
+        name="OrdersTab"
         component={OrderStackNavigator}
         options={{
           tabBarIcon: ({ color }) => (
@@ -78,8 +78,6 @@ const HomeStackNavigator = () => {
       />
       <HomeStack.Screen name="Dish" component={DishDetailed} />
       <HomeStack.Screen name="Basket" component={Basket} />
-      {/* <HomeStack.Screen name="Profile" component={Profile} />
-        <HomeStack.Screen name="Settings" component={Settings} /> */}
     </HomeStack.Navigator>
   );
 };
@@ -89,8 +87,12 @@ const OrderStack = createStackNavigator();
 const OrderStackNavigator = () => {
   return (
     <OrderStack.Navigator>
-      <OrderStack.Screen name="Orders" component={OrderScreen} />
-      <OrderStack.Screen name="Order" component={OrderDetails} />
+      <OrderStack.Screen name="Orders" component={OrdersScreen} />
+      <OrderStack.Screen
+        name="Order"
+        component={OrderDetailsNavigator}
+        screenOptions={{ headerShown: false }}
+      />
     </OrderStack.Navigator>
   );
 };

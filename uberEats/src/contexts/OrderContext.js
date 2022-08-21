@@ -7,22 +7,22 @@ import { useBasketContext } from "./BasketContext";
 const OrderContext = createContext({});
 
 const OrderContextProvider = ({ children }) => {
-  const { dbuser } = useAuthContext();
+  const { dbUser } = useAuthContext();
   const { restaurant, totalPrice, basketDishes, basket } = useBasketContext();
 
   // querying orders and saving them into state
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    DataStore.query(Order, (o) => o.userID("eq", dbuser.id)).then(setOrders);
-  }, [dbuser]);
+    DataStore.query(Order, (o) => o.userID("eq", dbUser.id)).then(setOrders);
+  }, [dbUser]);
   // create order function
   const createOrder = async () => {
     // console.warn("mobile apps");
     // create order
     const newOrder = await DataStore.save(
       new Order({
-        userID: dbuser.id,
+        userID: dbUser.id,
         Restaurant: restaurant,
         status: "NEW",
         total: totalPrice,
@@ -47,6 +47,8 @@ const OrderContextProvider = ({ children }) => {
 
     // set orderw with all the orders plus all the  new created
     setOrders([...orders, newOrder]);
+
+    return newOrder;
   };
 
   const getOrder = async (id) => {

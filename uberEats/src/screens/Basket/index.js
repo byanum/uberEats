@@ -5,12 +5,24 @@ import BasketDishItem from "../../components/BasketDishItem";
 import { useBasketContext } from "../../contexts/BasketContext";
 import { useOrderContext } from "../../contexts/OrderContext";
 
+import { useNavigation } from "@react-navigation/native";
 // import restaurants from "../../../assets/data/restaurants.json";
 // const restaurant = restaurants[0]; //dummy data
 
 export default function Basket() {
   const { restaurant, basketDishes, totalPrice } = useBasketContext();
   const { createOrder } = useOrderContext();
+
+  const navigation = useNavigation();
+
+  const onCreateOrder = async () => {
+    const newOrder = await createOrder();
+    navigation.navigate("OrdersTab", {
+      screen: "Order",
+      params: { id: newOrder.id },
+    });
+  };
+
   return (
     <View style={styles.page}>
       <Text style={styles.title}>{restaurant?.name}</Text>
@@ -22,7 +34,7 @@ export default function Basket() {
         renderItem={({ item }) => <BasketDishItem basketDish={item} />}
       />
       {/* button */}
-      <Pressable onPress={createOrder} style={styles.button}>
+      <Pressable onPress={onCreateOrder} style={styles.button}>
         <Text style={styles.btnText}>
           Create Order &#8226; ${totalPrice.toFixed(2)}
         </Text>
