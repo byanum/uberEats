@@ -24,7 +24,7 @@ const AuthContextProvider = ({ children }) => {
     if (!sub) {
       return;
     }
-    DataStore.query(Courier, (courier) => user.sub("eq", sub)).then(
+    DataStore.query(Courier, (courier) => courier.sub("eq", sub)).then(
       (couriers) => {
         setdbCourier(couriers[0]);
         setLoading(false);
@@ -32,6 +32,7 @@ const AuthContextProvider = ({ children }) => {
     );
   }, [sub]);
 
+  // to update driver's current location: like on cycle or car
   useEffect(() => {
     if (!dbCourier) {
       return;

@@ -10,9 +10,9 @@ const Stack = createNativeStackNavigator();
 const NavigationScreen = () => {
   const { dbCourier, loading } = useAuthContext();
 
-  // if (loading) {
-  //   return <ActivityIndicator size="large" color="grey" />;
-  // }
+  if (loading) {
+    return <ActivityIndicator size="large" color="grey" />;
+  }
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {dbCourier ? (

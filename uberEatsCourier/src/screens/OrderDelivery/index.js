@@ -13,13 +13,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import styles from "./styles";
 import BottomSheetDetails from "./BottomSheetDetails";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { useOrderContext } from "../../contexts/OrderContext";
 import CustomMarker from "../../components/CustomMarker";
+import { DataStore } from "aws-amplify";
+import { Courier } from "../../models";
 
 const OrderDelivery = () => {
   const navigation = useNavigation();
   const { order, user, fetchOrder } = useOrderContext();
-
+  const { dbCourier } = useOrderContext();
   const [driversLocation, setDriverLocation] = useState(null);
   const [totalMinutes, setTotalMinutes] = useState(0);
   const [totalKm, setTotalKm] = useState(0);
@@ -35,6 +38,19 @@ const OrderDelivery = () => {
   useEffect(() => {
     fetchOrder(id);
   }, [id]);
+
+  // saving driver's location in datastore as it changes every 100m
+  useEffect(() => {
+    if (!driversLocation) {
+      return;
+    }
+    DataStore.save(
+      Courier.copyOf(dbCourier, (updated) => {
+        updated.lat = driversLocation.latitude;
+        updated.lng = driversLocation.longitude;
+      })
+    );
+  }, [driversLocation]);
 
   // requesting user's location
   useEffect(() => {
